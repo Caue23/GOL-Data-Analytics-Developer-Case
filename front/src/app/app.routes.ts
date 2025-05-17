@@ -11,7 +11,7 @@ export const routes: Routes = [
     children: [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'booking', component: BookingComponent },
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
+      { path: '', redirectTo: 'booking', pathMatch: 'full' }
     ]
   },
   { path: '', redirectTo: 'home', pathMatch: 'full' },

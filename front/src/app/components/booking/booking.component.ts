@@ -76,7 +76,6 @@ export class BookingComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private appConstants: AppConstants) {
       this.aeroportos = this.appConstants.aeroportosBrasilIATA;
-      console.log(this.aeroportos);
     }
 
   ngOnInit(): void {
@@ -101,7 +100,7 @@ export class BookingComponent implements OnInit {
       && this.formData.arrival_iata && this.formData.arrival_date ) {
       this.validCpf()
     } else {
-      alert("Por favor, preencha todos os campos obrigatórios!");
+      Swal.fire('Erro!', 'Por favor, preencha todos os campos obrigatórios!', 'error');
     }
   }
 
@@ -113,14 +112,6 @@ export class BookingComponent implements OnInit {
 
 
   createBooking(): void {
-    const formattedData = {
-      ...this.formData,
-      birthday: this.formatDate(this.formData.birthday),
-      departure_date: this.formatDate(this.formData.departure_date),
-      arrival_date: this.formatDate(this.formData.arrival_date)
-    };
-
-
     this.apiService.post('/booking', this.formData).subscribe({
       next: () => {
         Swal.fire({
@@ -176,10 +167,27 @@ export class BookingComponent implements OnInit {
     cpf = cpf.replace(/\D/g, '');
     return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
   }
+  onDepartureDateChange(date: Date): void {
+    this.formData.departure_date = this.formatDate(date);
+    this.formData.arrival_date = '';
+    if (this.formData.arrival_date && new Date(this.formData.arrival_date) < date) {
+      this.formData.arrival_date = '';
+    }
+  }
 
+  capitalizeField(field: 'first_name' | 'last_name') {
+    this.formData[field] = this.formData[field]
+      .toLowerCase()
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  }
 
   onFileSelected(event: any): void {
     const file = event.target.files[0];
+    if (file) {
+      this.selectedFile = file;
+    }
     this.validateFile(file);
   }
 
@@ -278,6 +286,20 @@ export class BookingComponent implements OnInit {
   }
 
 
+  closeUploadModal(): void {
+    this.openModal = false;
+    this.selectedFile = null;
+    this.formData = {
+      first_name: '',
+      last_name: '',
+      birthday: '',
+      document: '',
+      departure_date: '',
+      departure_iata: '',
+      arrival_date: '',
+      arrival_iata: ''
+    };
+  }
 
 
 
@@ -288,6 +310,7 @@ export class BookingComponent implements OnInit {
       next: () => {
         Swal.fire('Sucesso', 'Arquivo enviado com sucesso!', 'success');
         this.selectedFile = null;
+        this.getBookings();
       },
       error: () => {
         Swal.fire('Erro', 'Falha ao enviar o arquivo.', 'error');

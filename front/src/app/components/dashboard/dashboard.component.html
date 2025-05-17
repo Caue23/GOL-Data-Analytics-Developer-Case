@@ -20,44 +20,73 @@
         [class.active]="selectedChart === 'chartFour'"
         (click)="selectedChart = 'chartFour'">Partidas e chegadas</button>
     </div>
+    <div class="filter" *ngIf="selectedChart !== 'chartThree'">
+      <label>
+        Mês:
+        <select [(ngModel)]="selectedMonth" (change)="filterCharts()">
+          <option *ngFor="let m of months" [value]="m.value">{{ m.name }}</option>
+        </select>
+      </label>
+
+      <label>
+        Ano:
+        <select [(ngModel)]="selectedYear" (change)="filterCharts()">
+          <option *ngFor="let y of years" [value]="y">{{ y }}</option>
+        </select>
+      </label>
+    </div>
 
 
     <div class="container">
       <section class="content">
-        <div *ngIf="selectedChart === 'chartOne' && chartOneOptions.series?.length">
-          <highcharts-chart
-            [Highcharts]="Highcharts"
-            [options]="chartOneOptions"
-            style="width: 100%; height: 400px; display: block;">
-          </highcharts-chart>
+
+        <div *ngIf="selectedChart === 'chartOne'">
+          <ng-container *ngIf="hasData(chartOneOptions); else noData">
+            <highcharts-chart
+              [Highcharts]="Highcharts"
+              [options]="chartOneOptions"
+              style="width: 100%; height: 400px; display: block">
+            </highcharts-chart>
+          </ng-container>
         </div>
 
-
         <div *ngIf="selectedChart === 'chartTwo'">
-          <highcharts-chart
-            [Highcharts]="Highcharts"
-            [options]="chartTwoOptions"
-            style="width: 100%; height: 400px; display: block">
-          </highcharts-chart>
+          <ng-container *ngIf="hasData(chartTwoOptions); else noData">
+            <highcharts-chart
+              [Highcharts]="Highcharts"
+              [options]="chartTwoOptions"
+              style="width: 100%; height: 400px; display: block">
+            </highcharts-chart>
+          </ng-container>
         </div>
 
         <div *ngIf="selectedChart === 'chartThree'">
-          <highcharts-chart
-            [Highcharts]="Highcharts"
-            [options]="chartThreeOptions"
-            style="width: 100%; height: 400px; display: block">
-          </highcharts-chart>
+          <ng-container *ngIf="hasData(chartThreeOptions); else noData">
+            <highcharts-chart
+              [Highcharts]="Highcharts"
+              [options]="chartThreeOptions"
+              style="width: 100%; height: 400px; display: block">
+            </highcharts-chart>
+          </ng-container>
         </div>
 
         <div *ngIf="selectedChart === 'chartFour'">
-          <highcharts-chart
-            [Highcharts]="Highcharts"
-            [options]="chartFourOptions"
-            style="width: 100%; height: 400px; display: block">
-          </highcharts-chart>
+          <ng-container *ngIf="hasData(chartFourOptions); else noData">
+            <highcharts-chart
+              [Highcharts]="Highcharts"
+              [options]="chartFourOptions"
+              style="width: 100%; height: 400px; display: block">
+            </highcharts-chart>
+          </ng-container>
         </div>
+
+        <ng-template #noData>
+          <div class="no-data">Nenhum dado encontrado</div>
+        </ng-template>
+
       </section>
     </div>
+
   </section>
 </div>
 

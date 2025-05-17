@@ -40,3 +40,6 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+back/Miniconda3-latest-Linux-x86_64.sh
+
